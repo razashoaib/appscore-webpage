@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="assets/style.css">
+  </head>
+  <body>
+      <ul>
+        <li><a href="#">Earthquake Info</a></li>
+      </ul>
+      <div id="map"></div>
+    <script>
+      var map;
+      var marker;
+
+      /**
+       * Convert seconds to time string (hh:mm:ss).
+       *
+       * @param Number s
+       *
+       * @return String
+       */
+      function getTime(s) {
+          return new Date(s * 1e3).toISOString().slice(-13, -5);
+      }
+
+      // Initialize the map with the default longitude and latitude points
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 2,
+          center: new google.maps.LatLng(2.8,-187.3),
+          mapTypeId: 'terrain'
+        });
+
+        // Create a <script> tag and set the USGS URL as the source.
+        var script = document.createElement('script');
+
+        // Setting the source of the script to get the json response from the API
+        script.src = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojsonp';
+        document.getElementsByTagName('head')[0].appendChild(script);
+      }
+
+      // Loop through the results array and place a marker for each result
+      window.eqfeed_callback = function(results) {
+        console.log(results);
+        for (var i = 0; i < results.features.length; i++) {
+          var coords = results.features[i].geometry.coordinates;
+          var latLng = new google.maps.LatLng(coords[1],coords[0]);
+
+          marker = new google.maps.Marker({
+            position: latLng,
+            map: map,
+            animation: google.maps.Animation.DROP
+          });
+          
+          var location = results.features[i].properties.place;
+          var unixTime = results.features[i].properties.time;
+          var tm = getTime(unixTime);
+
+          // Setting up the tooltip for each marker
+          var content =  "<div><h2>Earthquake Details</h2><h3 class='iw-subTitle'>Location</h3><p>" + location + "</p><h3>Time</h3><p>" + tm + "</p></div>";
+
+          var infowindow = new google.maps.InfoWindow()
+
+          google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){ 
+                return function() {
+                   infowindow.setContent(content);
+                   infowindow.open(map,marker);
+                };
+            })(marker,content,infowindow)); 
+        }
+      }
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcESs3B3CCwtmYxgMDaxa-dclqVjhao8E
+&callback=initMap">
+    </script>
+  </body>
+</html>
