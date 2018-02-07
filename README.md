@@ -14,7 +14,7 @@ When the user taps on an annotation it is to display the location and date/time 
 http://localhost:8080/appscore-webpage
 
 #### Webpage Screenshot
-![Output](/ScreenShot.png?raw=true "Webpage Screenshot")
+![Output](https://github.com/razashoaib/appscore-webpage/blob/master/Screenshot.png?raw=true "Webpage Screenshot")
 
 ## Acknowledgements
 
